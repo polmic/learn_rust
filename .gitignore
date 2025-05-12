@@ -1,0 +1,6 @@
+# Rust
+**/target
+
+# Intellij
+.idea
+*.iml
