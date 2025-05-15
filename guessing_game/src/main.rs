@@ -6,31 +6,42 @@ fn generate_secret() -> u32 {
     rand::rng().random_range(1..=100)
 }
 
-fn compare_secret_to_guess(secret: u32, guess: u32) {
+fn compare_secret_to_guess(secret: u32, guess: u32) -> Ordering {
     match guess.cmp(&secret) {
-        Ordering::Less => println!("Too small!"),
-        Ordering::Greater => println!("Too big!"),
-        Ordering::Equal => println!("You win!"),
+        Ordering::Less => {
+            println!("Too small!");
+            Ordering::Less
+        },
+        Ordering::Greater => {
+            println!("Too big!");
+            Ordering::Greater
+        },
+        Ordering::Equal => {
+            println!("You win!");
+            Ordering::Equal
+        },
     }
 }
 
 fn main() {
     let secret = generate_secret();
 
-    println!("{secret}");
-
     println!("Guess the number:");
     println!("Input your guess");
 
-    let mut guess: String = String::new();
+    loop {
+        let mut guess: String = String::new();
 
-    io::stdin()
-        .read_line(&mut guess)
-        .expect("Failed to read line");
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("Failed to read line");
 
-    println!("You guessed: {}", guess);
-    
-    let guess: u32 = guess.trim().parse().expect("Not a valid positive number");
-    
-    compare_secret_to_guess(secret, guess);
+        println!("You guessed: {guess}");
+
+        let guess: u32 = guess.trim().parse().expect("Not a valid positive number");
+        
+        if compare_secret_to_guess(secret, guess) == Ordering::Equal {
+            break;
+        }
+    }
 }
