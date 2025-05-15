@@ -1,22 +1,11 @@
-#[derive(Debug)]
-struct Rectangle {
-    width: u32,
-    height: u32
-}
+mod rectangle;
 
-impl Rectangle {
-    fn area(&self) -> u32 {
-        self.width * self.height
-    }
-}
+use rectangle::Rectangle;
 
 fn main() {
-    let rectangle = Rectangle {
-        width: 32,
-        height: 32
-    };
-    
-    println!("rectangle: {:?}", rectangle);
+    let rectangle = Rectangle::new(32, 32);
+
+    println!("{:?}", rectangle);
 
     println!("Area: {}", rectangle.area());
 }
