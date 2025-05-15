@@ -7,27 +7,28 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(args: &[String]) -> Result<Self, &'static str> {
-        if args.len() != 3 {
-            return Err("arguments must be query and filepath");
-        }
-        Ok(Self {
-            query: args[1].clone(),
-            filepath: args[2].clone(),
-        })
+    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+
+        let filepath = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
+
+        Ok(Self { query, filepath })
     }
 }
 
 fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-
-    results
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
@@ -37,7 +38,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     for line in search(&config.query, &contents) {
         println!("{line}");
     }
-    
+
     Ok(())
 }
 
